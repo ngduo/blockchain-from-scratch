@@ -38,7 +38,7 @@ impl Header {
     fn child(&self) -> Self {
         Header {
             parent: hash(self),
-            height: 1,
+            height: self.height + 1,
             extrinsics_root: (),
             state_root: (),
             consensus_digest: (),
@@ -55,17 +55,19 @@ impl Header {
         }
 
         let mut current_parent = hash(self);
+        let mut current_height = self.height;
 
         for header in chain {
             if header.parent != current_parent {
                 return false;
             }
 
-            if header.height != 1 {
+            if header.height != current_height + 1 {
                 return false;
             }
 
             current_parent = hash(header);
+            current_height = header.height;
         }
 
         true
